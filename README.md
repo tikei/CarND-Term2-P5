@@ -19,10 +19,10 @@ This project uses the Udacity Self-Driving car simulator.
 The vehicle model used in this project is the Global Kinematic Model. The state of the vehicle includes its coordinates, velocity,  orientation. This is a simplification of the Dynamic Vehicles Models, which also include tire forces, longitudinal and lateral forces as well as air resistance, drag etc.
 The equations of the Global Kinematic Model to update the vehicle state are:
 
-*x_t+1 = x_t + velocity_t * cos(psi_t) * dt*
-*y_t+1 = y_t + velocity_t * sin(psi_t) * dt*
-*psi_t+1 = psi_t + velocity_t / Lf * delta * dt*
-*velocity_t+1 = velocity_t + a * dt*
+* *x_t+1 = x_t + velocity_t * cos(psi_t) * dt*
+* *y_t+1 = y_t + velocity_t * sin(psi_t) * dt*
+* *psi_t+1 = psi_t + velocity_t / Lf * delta * dt*
+* *velocity_t+1 = velocity_t + a * dt*
 
 where:
 
@@ -33,19 +33,21 @@ where:
 * **Lf** :the distance between the front of the vehicle and its center of gravity. The larger the vehicle, the slower the turn rate. 
 
 **Errors**
+
 The Global Kinematic Model also considers the follwing two errors:
 
 * The cross-track-error **CTE** and
 * The orientation error relative to the reference line orientation. 
+
 The update equations for these errors are:
 
-* *cte_t+1 ​= cte_t​ + v_t​ * sin(psi_error_t​) * dt* (1)
+1) *cte_t+1 ​= cte_t​ + v_t​ * sin(psi_error_t​) * dt* (1)
 
 where cte_t can be expressed as the difference between the line the vehicle has to follow and the current vehicle position y.
 Assuming the reference line is a first order polynomial f, f(x_t) is the reference line and cte_t = y_t - f(x_t)
 Therefore, substituting in (1):
 
-* *cte_t = y_t − f(x_t) + v_t​ * sin(psi_error_t​)* * dt
+*cte_t = y_t − f(x_t) + v_t​ * sin(psi_error_t​) * dt*
 
 The orientation error is calculated as follows:
 
@@ -57,7 +59,7 @@ where,
 
 *psi_error_t = psi_t - psi_des_t*
 
-The desired angle at time t **psi_des_t** is calculated as the tangential angle of the polynomial f evaluated at x_t, i.e.:
+The desired orientation angle at time t **psi_des_t** is calculated as the tangential angle of the polynomial f evaluated at x_t, i.e.:
 *psi_des_t = arctan( f_prime(x_t) )*, where *f_prime(x_t)* is the derivative value of the polynomial.
 
 The Global Kinematic Model state vector is then: ( *x_t+1 , y_t+1, psi_t+1, velocity_t+1, cte_t+1, psi_error_t+1* ) 
@@ -70,6 +72,7 @@ The goal of the MPC is to minimise the above state vector errors, by selecting a
 ### Parameters
 
 The MPC algorithm uses the following parameters:
+
 **Lf**: a value of 2.67 meters was obtained by measuring the radius formed by running the vehicle in the simulator around in a circle with a constant steering angle and velocity on a flat terrain.
 
 **N**: the number of time steps in the horizon, considered by the MPC controller.
@@ -101,9 +104,10 @@ The above equations of the Global Kinematic Model were used to update the curren
 
 
 ### Additional Throttle control optimization
-As discussed, the Global Kinematic Model does not take into account various forces (tire, longitudinal, lateral) To add a more realistic behaviour, the throttle was scaled by the slope of the fitted curve evaluated 30 meters ahead of the car. By calculating the derivative (slope) of the curve at this point, the car can anticipate the radius of the next turn and slow down accordingly. Otherwise, in a realistic scenario, the car would not be able to pass all turns driving at a constant velocity of 80 mph!
+As discussed, the Global Kinematic Model does not take into account various forces (tire, longitudinal, lateral). To add a more realistic behaviour, the throttle was scaled by the slope of the fitted curve evaluated 30 meters ahead of the car. By calculating the derivative (slope) of the curve at this point, the car can anticipate the radius of the next turn and slow down accordingly. Otherwise, in a realistic scenario, the car would not be able to pass all turns driving at a constant velocity of 80 mph!
  
 
+___
 
 ## Dependencies
 
